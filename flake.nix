@@ -13,13 +13,16 @@
       });
     in
     {
-      devShells = forEachSupportedSystem ({ pkgs }: {
+      devShells = forEachSupportedSystem ({ pkgs }: let 
+        R-with-packages = pkgs.rWrapper.override{packages = with pkgs.rPackages; [Rmpfr]; };
+      in {
         default = pkgs.mkShell {
           packages = with pkgs; [ 
             # R: start programs with `Rscript`
-            R
+            # R-with-packages
             rPackages.languageserver # R lsp
           ];
+          buildInputs = [ R-with-packages ];
         };
       });
     };
