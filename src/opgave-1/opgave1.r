@@ -1,5 +1,4 @@
 # Opstellen van de 64x64 markov matrix
-p_size <- 10
 p <- matrix(0, nrow = 64, ncol = 64)
 
 bits_as_state <- function(bits) {
