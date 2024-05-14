@@ -14,33 +14,27 @@ simulation <- function(start_state, end_state) {
 
     # Update state
     current_state <- c(current_state[-1], new_coin)
-
   }
 
   return(tries)
 }
 
 string_to_bits <- function(state) {
-  bits <- 0
 
-  for(char in state){
-    
-  }
-
-  bits <- integer(nchar(state))
-  for (i in seq_along(state)) {
-    char <- substr(state, i, i)
-    print(char)
-    if (char == "K") {
+  chars <- strsplit(state, "")[[1]]
+  bits <- integer(length(chars))
+  for (i in seq_along(chars)) {
+    if (chars[i] == "K") {
       bits[i] <- 0
-    } else if (char == "M") {
+    } else {
       bits[i] <- 1
     }
   }
+
   return(bits)
 }
 
-simulate <- function(n_simulations = 500) {
+simulate <- function(n_simulations = 10000) {
   start_state <- string_to_bits("MKKKKM")
   end_state <- string_to_bits("MMMMMM")
 
@@ -53,6 +47,5 @@ simulate <- function(n_simulations = 500) {
   return(mean(tries))
 }
 
-print(string_to_bits("MMMMMM"))
-print(string_to_bits("MMMMMK"))
-print(string_to_bits("MMMMKM"))
+print(simulate())
+
