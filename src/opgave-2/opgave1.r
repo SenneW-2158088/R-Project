@@ -5,7 +5,7 @@
 #    - 2: Uniform:     a = 5 min, b = 10 min
 #    - 3: Uniform:     a = 6 min, b = 12 min
 #    - 4: Gamma:       \alpha = 7, \lambda = 2 min^-1
-# - Average interval time: 2.5 min
+# - Average interval time of job arrival: 2.5 min
 # - Arrive independently of each other, according to a Poisson process
 # - A server available? Jobs are equally likely to be processed by any of them
 # - No server available? Job enters queue, leaves system after
