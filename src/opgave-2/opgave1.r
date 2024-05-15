@@ -49,6 +49,8 @@ simulation <- function(simulation_time) {
     # Record queue length and availability of servers when a new job arrives
     queue_lengths <- c(queue_lengths, length(job_queue))
     available_servers <- which(server_times <= arrival_time)
+    available_servers <- sample(available_servers)
+
     available_server_counts <- c(available_server_counts, length(available_servers))
 
     # Remove jobs that waited too long and record their waiting times
