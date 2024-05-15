@@ -83,7 +83,7 @@ while (arrival_time < 600) { # until end of day
   }
   selected_servers <- c(selected_servers, selected_server)
   if (selected_server > 0) {
-    # gamma
+    finish_time <- calc_finish_time(selected_server)
     finishes <- c(finishes, starts[job] + finish_time) # time finished
     server_available[selected_server] <- starts[job] + finish_time
   }
