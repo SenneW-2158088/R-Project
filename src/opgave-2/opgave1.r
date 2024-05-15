@@ -40,13 +40,13 @@ arrival_time <- 0 # arrival time of a new job
 server_available <- rep(0, k) # times when each server becomes available
 
 calc_finish_time <- function(server_id) {
-  param <- service_time_params[server_id]
+  param <- service_time_params[server_id][[1]]
   if (param[[1]] == "exponential") {
     return(rexp(1, rate = param[[2]]))
   } else if (param[[1]] == "uniform") {
     return(runif(1, min = param[[2]], max = param[[3]]))
   } else if (param[[1]] == "gamma") {
-    finish_time <- sum(-1 / param[2] * log(runif(param[3])))
+    finish_time <- sum(-1 / param[[2]] * log(runif(param[[3]])))
     return(finish_time)
   }
 }
@@ -61,7 +61,7 @@ while (arrival_time < 600) { # until end of day
   # number of free servers at time T
   n_free <- sum(server_available < arrival_time)
   selected_server <- 1 # the server that will take job j
-  if (n_free) {
+  if (n_free == 0) {
     for (v in (2:k)) {
       if (server_available[v] < server_available[selected_server]) {
         selected_server <- v
@@ -69,8 +69,9 @@ while (arrival_time < 600) { # until end of day
     }
     # withdraw job if waiting time more than 6 min
     if ((server_available[selected_server] - arrival_time) > 6) {
-      starts <- c(starts, 0)
-      finishes <- c(finishes, arrival_time + 15)
+      # todo fix this
+      starts <- c(starts, arrival_time + 6)
+      finishes <- c(finishes, arrival_time + 6)
     } else {
       starts <- c(starts, server_available[selected_server])
     }
@@ -88,3 +89,7 @@ while (arrival_time < 600) { # until end of day
     server_available[selected_server] <- starts[job] + finish_time
   }
 }
+
+print(sprintf("a: Expected waiting time: %s", mean(starts - arrivals)))
+print(sprintf("b: Expected response time: %s", mean(finish - starts)))
+print(sprintf("d: Lengt of queue: %s", mean(service_times)))
