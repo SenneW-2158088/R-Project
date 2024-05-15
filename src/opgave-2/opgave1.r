@@ -22,30 +22,69 @@
 
 k <- 4 # number of server
 mu <- 2.5 # mean interrarrival time
-# exponential
-exp_lambda <- c(0.5)
-# uniform
-uni_a <- c(5, 10)
-uni_b <- c(10, 12)
-# gamma
-gamma_alpha <- 7
-gamma_lambda <- 2
+service_time_params <- list(
+  list("exponential", 0.5),  # Exponential, lambda = 0.5
+  list("uniform", 5, 10),    # Uniform, a = 5, b = 10
+  list("uniform", 6, 12),    # Uniform, a = 6, b = 12
+  list("gamma", 7, 2)        # Gamma, alpha = 7, lambda = 2
+)
 
 # initialization
 
-arrival <- c() # arrival timestamp
-start <- c() # service starts
-finish <- c() # service finishes, departure times
-server <- c() # assigned server
-j <- 0 # the job number is initialized
-T <- 0 # arrival tiem of a new job
-A = rep(0, k) # times when each server becomes available
+arrivals <- c() # arrival timestamp
+starts <- c() # service starts
+finishes <- c() # service finishes, departure times
+selected_servers <- c() # assigned server
+job <- 0 # the job number is initialized
+arrival_time <- 0 # arrival time of a new job
+server_available <- rep(0, k) # times when each server becomes available
 
-# while loop until arrival time reached 10 hours or 600 minutes
-
-while (T < 600) { # until end of day
-  j <- j + 1 # next job
-  T <- T - mu * log(runif(1))
-  arrival <- c(arrival, T)
+calc_finish_time <- function(server_id) {
+  param <- service_time_params[server_id]
+  if (param[[1]] == "exponential") {
+    return(rexp(1, rate = param[[2]]))
+  } else if (param[[1]] == "uniform") {
+    return(runif(1, min = param[[2]], max = param[[3]]))
+  } else if (param[[1]] == "gamma") {
+    finish_time <- sum(-1 / param[2] * log(runif(param[3])))
+    return(finish_time)
+  }
 }
 
+# while loop until arrival time reached 10 hours or 600 minutes
+while (arrival_time < 600) { # until end of day
+  job <- job + 1 # next job
+  arrival_time <- arrival_time - mu * log(runif(1)) # arrival time of job j
+  arrivals <- c(arrivals, arrival_time)
+  # random assignment of new job j to a server
+  # two cases: all servers are busy or not
+  # number of free servers at time T
+  n_free <- sum(server_available < arrival_time)
+  selected_server <- 1 # the server that will take job j
+  if (n_free) {
+    for (v in (2:k)) {
+      if (server_available[v] < server_available[selected_server]) {
+        selected_server <- v
+      }
+    }
+    # withdraw job if waiting time more than 6 min
+    if ((server_available[selected_server] - arrival_time) > 6) {
+      starts <- c(starts, 0)
+      finishes <- c(finishes, arrival_time + 15)
+    } else {
+      starts <- c(starts, server_available[selected_server])
+    }
+  } else {
+    selected_server <- sample(k, 1) # random server
+    while (server_available[selected_server] > arrival_time) {
+      selected_server <- sample(k, 1)
+    }
+    starts <- c(starts, arrival_time)
+  }
+  selected_servers <- c(selected_servers, selected_server)
+  if (selected_server > 0) {
+    # gamma
+    finishes <- c(finishes, starts[job] + finish_time) # time finished
+    server_available[selected_server] <- starts[job] + finish_time
+  }
+}
