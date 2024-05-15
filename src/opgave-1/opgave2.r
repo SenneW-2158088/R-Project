@@ -34,7 +34,7 @@ string_to_bits <- function(state) {
   return(bits)
 }
 
-simulate <- function(n_simulations = 1) {
+simulate <- function(n_simulations = 1000) {
   start_state <- string_to_bits("MKKKKM")
   end_state <- string_to_bits("MMMMMM")
 

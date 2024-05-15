@@ -96,6 +96,7 @@ simulation <- function(simulation_time) {
     avg_waiting_time = mean(waiting_times),
     avg_response_time = mean(response_times),
     avg_queue_length = mean(queue_lengths),
+    max_waiting_time = max(waiting_times),
     prob_server_available = mean(available_server_counts > 0),
     jobs_processed = jobs_processed,
     final_queue_length = final_queue_length,
@@ -112,15 +113,16 @@ results <- replicate(num_simulations, simulation(simulation_time), simplify = FA
 avg_waiting_time <- mean(sapply(results, function(res) res$avg_waiting_time))
 avg_response_time <- mean(sapply(results, function(res) res$avg_response_time))
 avg_queue_length <- mean(sapply(results, function(res) res$avg_queue_length))
+avg_max_waiting_time <- mean(sapply(results, function(res) res$max_waiting_time))
 prob_server_available <- mean(sapply(results, function(res) res$prob_server_available))
 avg_jobs_processed <- colMeans(do.call(rbind, lapply(results, function(res) res$jobs_processed)))
 final_queue_length <- mean(sapply(results, function(res) res$final_queue_length))
 final_system_length <- mean(sapply(results, function(res) res$final_system_length))
 
 # Output results
-cat("Expected waiting time:", avg_waiting_time, "\n")
-cat("Expected response time:", avg_response_time, "\n")
-cat("Expected queue length when a new job arrives:", avg_queue_length, "\n")
-cat("Probability that at least one server is available when a job arrives:", prob_server_available, "\n")
-cat("Expected number of jobs processed by each server:", avg_jobs_processed, "\n")
-cat("Expected number of jobs still remaining in the system at 18:03:", final_system_length, "\n")
+cat("a) Expected waiting time:", avg_waiting_time, "\n")
+cat("b) Expected response time:", avg_response_time, "\n")
+cat("d) Expected maximum waiting time during a 10-hour day:", avg_max_waiting_time, "\n")
+cat("f) Probability that at least one server is available when a job arrives:", prob_server_available, "\n")
+cat("h) Expected number of jobs processed by each server:", avg_jobs_processed, "\n")
+cat("j) Expected number of jobs still remaining in the system at 18:03:", final_system_length, "\n")
