@@ -5,7 +5,7 @@
 #    - 2: Uniform:     a = 5 min, b = 10 min
 #    - 3: Uniform:     a = 6 min, b = 12 min
 #    - 4: Gamma:       \alpha = 7, \lambda = 2 min^-1
-# - Average interval time of job arrival: 2.5 min
+# - Average interarrival time of jobs: 2.5 min
 # - Arrive independently of each other, according to a Poisson process
 # - A server available? Jobs are equally likely to be processed by any of them
 # - No server available? Job enters queue, leaves system after
@@ -19,3 +19,33 @@
 # f: the probability that at least one server is available, when a job arrives;
 # h: the expected number of jobs processed by each server;
 # j: the expected number of jobs still remaining in the system at 6:03 pm;
+
+k <- 4 # number of server
+mu <- 2.5 # mean interrarrival time
+# exponential
+exp_lambda <- c(0.5)
+# uniform
+uni_a <- c(5, 10)
+uni_b <- c(10, 12)
+# gamma
+gamma_alpha <- 7
+gamma_lambda <- 2
+
+# initialization
+
+arrival <- c() # arrival timestamp
+start <- c() # service starts
+finish <- c() # service finishes, departure times
+server <- c() # assigned server
+j <- 0 # the job number is initialized
+T <- 0 # arrival tiem of a new job
+A = rep(0, k) # times when each server becomes available
+
+# while loop until arrival time reached 10 hours or 600 minutes
+
+while (T < 600) { # until end of day
+  j <- j + 1 # next job
+  T <- T - mu * log(runif(1))
+  arrival <- c(arrival, T)
+}
+
